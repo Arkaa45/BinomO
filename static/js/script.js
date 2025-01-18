@@ -27,9 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 const graphImg = document.getElementById("graph");
-                // Tambahkan timestamp ke URL untuk menghindari cache
-                const timestamp = new Date().getTime();
-                graphImg.src = `${result.graph_url}?t=${timestamp}`;
+                graphImg.src = `data:image/png;base64,${result.graph_base64}`;
                 graphImg.style.display = "block";
 
                 resultContainer.style.display = "block";
