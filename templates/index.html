@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kalkulator Probabilitas Binomial</title>
     <link rel="stylesheet" href="/static/css/styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -13,36 +12,30 @@
         <form id="binomialForm">
             <div class="form-group">
                 <label for="n">Jumlah Percobaan (n):</label>
-                <input type="number" id="n" name="n" required>
+                <input type="number" id="n" name="n" required min="1">
             </div>
-
             <div class="form-group">
-                <label for="p">Peluang Keberhasilan (p):</label>
-                <input type="text" id="p" name="p" required>
+                <label for="p">Probabilitas Sukses (p):</label>
+                <input type="number" id="p" name="p" required step="0.01" min="0" max="1">
             </div>
-
             <div class="form-group">
-                <label for="x">Jumlah Keberhasilan (k):</label>
-                <input type="number" id="x" name="x" required>
+                <label for="x">Jumlah Keberhasilan (x):</label>
+                <input type="number" id="x" name="x" required min="0">
             </div>
-
-            <button type="submit">Hitung</button>
+            <button type="submit" class="btn">Hitung</button>
         </form>
 
         <div id="result-container" style="display: none;">
             <h2>Hasil:</h2>
             <p id="result"></p>
-
-            <h3>Langkah-Langkah:</h3>
             <ul id="steps"></ul>
-
             <h3>Grafik Distribusi:</h3>
-            <img id="graph" src="" alt="Grafik distribusi binomial" style="max-width: 100%;">
-
-            <button type="button" id="resetButton" style="margin-top: 10px;">Reset</button>
+            <img id="graph" src="" alt="Grafik distribusi binomial" style="max-width: 100%; display: none;">
+            <button id="resetButton" class="btn">Reset</button>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="/static/js/script.js"></script>
 </body>
 </html>
