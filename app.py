@@ -2,16 +2,24 @@ from flask import Flask, render_template, request, jsonify
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from scipy.stats import binom
+from math import factorial
 
 app = Flask(__name__)
 
-# Endpoint utama untuk menampilkan form
+# Fungsi untuk menghitung kombinasi (nCx)
+def kombinasi(n, x):
+    return factorial(n) // (factorial(x) * factorial(n - x))
+
+# Fungsi untuk menghitung probabilitas binomial
+def probabilitas_binomial(n, x, p):
+    nCx = kombinasi(n, x)
+    prob = nCx * (p ** x) * ((1 - p) ** (n - x))
+    return prob
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# Endpoint untuk menghitung probabilitas binomial
 @app.route("/calculate", methods=["POST"])
 def calculate():
     data = request.get_json()
@@ -21,17 +29,17 @@ def calculate():
         x = int(data["x"])
 
         # Perhitungan probabilitas
-        probability = binom.pmf(x, n, p)
+        probability = probabilitas_binomial(n, x, p)
         steps = [
             f"Rumus: P(X = x) = (nCx) * p^x * (1-p)^(n-x)",
-            f"nCx = {n}! / ({x}! * ({n}-{x})!)",
-            f"P(X = {x}) = ({n}C{x}) * {p}^{x} * (1-{p})^{n-x}",
+            f"nCx = {n}! / ({x}! * ({n}-{x})!) = {kombinasi(n, x)}",
+            f"P(X = {x}) = ({kombinasi(n, x)}) * {p}^{x} * (1-{p})^{n-x}",
             f"P(X = {x}) = {probability:.4f}",
         ]
 
-        # Membuat grafik
+        # Membuat grafik distribusi binomial
         x_vals = np.arange(0, n + 1)
-        y_vals = binom.pmf(x_vals, n, p)
+        y_vals = [probabilitas_binomial(n, i, p) for i in x_vals]
 
         plt.figure(figsize=(8, 6))
         plt.bar(x_vals, y_vals, color="skyblue", edgecolor="black")
@@ -40,6 +48,7 @@ def calculate():
         plt.ylabel("Probabilitas", fontsize=12)
         plt.grid(axis="y", linestyle="--", alpha=0.7)
 
+        # Simpan grafik ke dalam file
         graph_path = os.path.join("static", "graph.png")
         plt.savefig(graph_path)
         plt.close()
