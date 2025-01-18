@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import matplotlib.pyplot as plt
 import numpy as np
-import os
+from io import BytesIO
+import base64
 from math import factorial
 
 app = Flask(__name__)
@@ -48,16 +49,20 @@ def calculate():
         plt.ylabel("Probabilitas", fontsize=12)
         plt.grid(axis="y", linestyle="--", alpha=0.7)
 
-        # Simpan grafik ke dalam file
-        graph_path = os.path.join("static", "graph.png")
-        plt.savefig(graph_path)
+        # Simpan grafik ke stream byte
+        img_stream = BytesIO()
+        plt.savefig(img_stream, format="png")
         plt.close()
+        img_stream.seek(0)
+
+        # Encode stream ke base64
+        graph_base64 = base64.b64encode(img_stream.read()).decode('utf-8')
 
         return jsonify({
             "success": True,
             "probability": probability,
             "steps": steps,
-            "graph_url": f"/{graph_path}",
+            "graph_base64": graph_base64,
         })
     except Exception as e:
         return jsonify({"success": False, "message": str(e)})
